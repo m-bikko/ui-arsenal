@@ -1,0 +1,4038 @@
+{
+  "schema_version": 1,
+  "updated": "2026-09-19",
+  "note": "Registry of UI/effect sources. Every entry was HTTP-verified on the date in `verified`. Add new entries with scripts/add_source.py (it probes and fills `access` automatically). See references/maintaining.md.",
+  "access_methods": {
+    "llms-full": "curl the site's /llms-full.txt — full source dump of every component in one file. Cheapest and best when it exists.",
+    "llms-txt": "curl the site's /llms.txt — index + prose contract, links to per-item pages. Read this before anything else.",
+    "md-suffix": "Append `.md` to a page URL to get a lightweight markdown twin instead of the JS app.",
+    "shadcn-registry": "`npx shadcn@latest add @<ns>/<item>` installs into the project. `curl <base>/registry.json` lists every item; `curl <base>/<item>.json` returns the item WITH full file contents inline — read source without installing.",
+    "registry-json": "Site exposes its own machine-readable JSON catalog at a fixed URL.",
+    "mcp": "MCP server — the agent searches/installs through tools. Needs one-time setup by the user.",
+    "rest-api": "Documented HTTP API (often with an OpenAPI spec).",
+    "git-clone": "Clone the repo and read/copy files. Use when there is no machine index or the site blocks bots.",
+    "gh-api": "GitHub REST API (contents / search / org repos) — enumerate without cloning.",
+    "npm": "Published package — install and use directly instead of copying source.",
+    "cdn": "Drop-in <script> or <link> from a CDN, no build step.",
+    "browse": "gstack /browse headless Chromium renders it fine. Use `$B goto`, `$B text`, `$B html <sel>`, `$B snapshot -i`.",
+    "browse-headed": "Bot protection (Cloudflare) blocks headless AND curl. Needs `browse --headed`, `$B handoff`, or the user.",
+    "manual": "No automatable path — the user opens it and pastes."
+  },
+  "sources": [
+    {
+      "id": "shadcn-registry-index",
+      "name": "shadcn Registry Directory (meta-index)",
+      "url": "https://ui.shadcn.com/docs/directory",
+      "kind": "meta-index",
+      "why": "THE entry point. 354 community registries with live health scores, all installable by the shadcn CLI with zero config. Start every search here before hardcoding anything.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "meta",
+        "registry",
+        "everything"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind",
+        "vue",
+        "svelte"
+      ],
+      "license": "varies per registry",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ui.shadcn.com/r/registries.json",
+          "note": "354 entries: name, homepage, url template, description, health score. ~260 KB. Use scripts/search.py --live instead of eyeballing it."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @<registry>/<item>",
+          "note": "Every listed registry resolves with no components.json edit."
+        },
+        {
+          "method": "mcp",
+          "cmd": "npx shadcn@latest mcp init --client claude",
+          "note": "Official shadcn MCP — browse/search/install across all registries in natural language."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "voiceorbs",
+      "name": "VoiceOrbs",
+      "url": "https://voiceorbs.vercel.app",
+      "kind": "gallery",
+      "why": "The reference for the pattern: live demo + state toggles + speed/size/color config + Copy AI prompt + View code + StackBlitz. 14 audio-reactive orbs for AI voice UIs, one shared props contract.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "orb",
+        "ai-voice",
+        "shader",
+        "webgl",
+        "canvas",
+        "css",
+        "svg-filter",
+        "audio-reactive"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": true,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://voiceorbs.vercel.app/llms-full.txt",
+          "note": "BEST PATH. Every orb + shared lib + integration guide in one file. No browser needed."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://voiceorbs.vercel.app/llms.txt",
+          "note": "Props contract (state/size/speed/colorFrom/colorTo/levelRef) + per-orb links."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone https://github.com/amunozdev/voiceorbs",
+          "note": "amunozdev/voiceorbs, MIT. Source lives in src/registry/."
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://voiceorbs.vercel.app/orbs/<slug>",
+          "note": "Only when the user wants a screenshot or to compare variants visually."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "21st",
+      "name": "21st.dev",
+      "url": "https://21st.dev",
+      "kind": "gallery",
+      "why": "12,000+ community React/Tailwind components. The widest net. Agent-native on three surfaces: web, MCP, CLI, plus a REST API.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "meta",
+        "everything",
+        "blocks",
+        "templates",
+        "shader",
+        "background"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "varies per author",
+      "cost": "freemium",
+      "ai_prompt": true,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "md-suffix",
+          "cmd": "curl -sSL 'https://21st.dev/@<author>/components/<slug>.md'",
+          "note": "KEY TRICK. Append .md to component/category/author/library URLs for a markdown twin. No auth, no browser."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://21st.dev/llms.txt",
+          "note": "Explains every surface. Read once."
+        },
+        {
+          "method": "rest-api",
+          "cmd": "curl -sSL https://21st.dev/openapi.json",
+          "note": "Search/install/publish. Auth: Bearer key from https://21st.dev/mcp."
+        },
+        {
+          "method": "mcp",
+          "cmd": "npx @21st-dev/cli@latest init --client claude",
+          "note": "Formerly 'Magic MCP'. Tools: search, generate, get_inspiration, search_logo."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "react-bits",
+      "name": "React Bits",
+      "url": "https://reactbits.dev",
+      "kind": "gallery",
+      "why": "47k stars. Animations, backgrounds, text effects, 3D bits. Every component ships in 4 variants (JS/TS x CSS/Tailwind) kept in sync. Uses gsap / motion / three / ogl per component.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "animation",
+        "background",
+        "text",
+        "webgl",
+        "ogl",
+        "three",
+        "gsap",
+        "cursor",
+        "scroll"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT + Commons Clause",
+      "cost": "free (Pro tier exists)",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @react-bits/<Name>-TS-TW",
+          "note": "688 items. Suffix picks the variant: -JS-CSS -JS-TW -TS-CSS -TS-TW."
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://reactbits.dev/r/registry.json",
+          "note": "688-item index. Then curl https://reactbits.dev/r/<Name>-TS-TW.json for full source + deps inline."
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://reactbits.dev/llms-full.txt"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone https://github.com/DavidHDev/react-bits"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "magicui",
+      "name": "Magic UI",
+      "url": "https://magicui.design",
+      "kind": "gallery",
+      "why": "150+ animated components and effects for design engineers. Utility motion you reuse constantly: shimmer, sparkles, marquee, bento, beams, globe.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "animation",
+        "motion",
+        "marketing",
+        "bento",
+        "text",
+        "background",
+        "globe"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free (Pro templates paid)",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @magicui/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://magicui.design/r/registry.json",
+          "note": "250 items."
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://magicui.design/llms-full.txt"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone https://github.com/magicuidesign/magicui"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "aceternity",
+      "name": "Aceternity UI",
+      "url": "https://ui.aceternity.com",
+      "kind": "gallery",
+      "why": "The maximalist one. 3D card effects, spotlight backgrounds, animated borders, parallax text, lamp/aurora heroes. When the brief says 'make it look expensive'.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "animation",
+        "3d-card",
+        "spotlight",
+        "parallax",
+        "hero",
+        "background",
+        "motion"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "free components MIT-ish; templates paid",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @aceternity/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ui.aceternity.com/registry/registry.json",
+          "note": "278 items. Note the path is /registry/ not /r/."
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://ui.aceternity.com/llms-full.txt"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "paper-shaders",
+      "name": "Paper Shaders",
+      "url": "https://shaders.paper.design",
+      "kind": "gallery",
+      "why": "Zero-dependency GPU shaders as React components. Mesh/radial gradients, grain, dithering, halftone, paper texture, warp, swirl, spiral, waves, voronoi, metaballs, liquid metal. Live playground exposes every uniform and emits copy-paste code.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "shader",
+        "webgl",
+        "gradient",
+        "texture",
+        "background",
+        "liquid-metal",
+        "grain",
+        "dither"
+      ],
+      "stack": [
+        "react",
+        "vanilla",
+        "vue"
+      ],
+      "license": "Apache-2.0",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "npm i @paper-design/shaders-react",
+          "note": "PREFERRED. Zero deps. Vanilla variant: @paper-design/shaders."
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://shaders.paper.design/llms-full.txt"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone https://github.com/paper-design/shaders"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://shaders.paper.design/<effect>",
+          "note": "Use to dial in uniform values visually, then copy the emitted props."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "aicanvas",
+      "name": "AI Canvas",
+      "url": "https://aicanvas.me",
+      "kind": "gallery",
+      "why": "Closest thing to VoiceOrbs at scale: 86 animated components where most ship a full AI remix prompt, so you can either install the code or have an agent rebuild a variation. Has its own MCP.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "motion",
+        "ai-prompt",
+        "design-system",
+        "template"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "free tier MIT; premium proprietary",
+      "cost": "freemium",
+      "ai_prompt": true,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://aicanvas.me/llms-full.txt",
+          "note": "Free components include the full AI remix prompt in the open."
+        },
+        {
+          "method": "mcp",
+          "cmd": "npx -y @aicanvas/mcp",
+          "note": "Read-only tools: list_components, search_components, get_component, get_install_command, list_systems, list_templates."
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://aicanvas.me/r/registry.json",
+          "note": "178 items."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @aicanvas/<item>",
+          "note": "GOTCHA: needs a free account token. Signed out the CLI exits 0 but writes a placeholder file titled '(free account required)'. Check the file before reporting success."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "shadcn-io-shaders",
+      "name": "shadcn.io Shaders",
+      "url": "https://www.shadcn.io/shaders",
+      "kind": "gallery",
+      "why": "57 raw-WebGL shader backgrounds in 9 families — aurora, plasma, nebula, tunnels, truchet, voronoi, raymarching, fractals, water. Shadertoy-grade effects already wrapped as React components.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "shader",
+        "webgl",
+        "background",
+        "hero",
+        "glsl"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "see site",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "mcp",
+          "cmd": "claude mcp add shadcnio --transport http 'https://www.shadcn.io/api/mcp?token=<TOKEN>'",
+          "note": "Token from /dashboard/account. 15 tools."
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://www.shadcn.io/shaders",
+          "note": "No llms.txt. Per-shader page carries the install command and prop reference."
+        }
+      ],
+      "caveat": "Community site, NOT affiliated with shadcn/ui. Commercial Pro tier — confirm licensing before shipping.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "ui-layouts",
+      "name": "UI Layouts",
+      "url": "https://ui-layouts.com",
+      "kind": "gallery",
+      "why": "327 items: effects, design tools, ready-made blocks. Strong on scroll-driven and image-reveal layouts.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "blocks",
+        "scroll",
+        "effect",
+        "layout",
+        "gallery",
+        "image"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @ui-layouts/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ui-layouts.com/r/registry.json",
+          "note": "327 items."
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://ui-layouts.com/llms-full.txt"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone https://github.com/ui-layouts/uilayouts"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "motion-primitives",
+      "name": "Motion Primitives",
+      "url": "https://motion-primitives.com",
+      "kind": "gallery",
+      "why": "Small, composable motion primitives rather than finished flashy blocks. Use when you need control, not a look.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "motion",
+        "animation",
+        "primitive",
+        "transition",
+        "text"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free (Pro exists)",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @motion-primitives/<item>",
+          "note": "Registry template is /c/{name}.json, not /r/."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone https://github.com/ibelick/motion-primitives"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://motion-primitives.com/docs/<item>"
+        }
+      ],
+      "caveat": "Rate-limits aggressive curl (429). Space requests or use the GitHub clone.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "cult-ui",
+      "name": "Cult UI",
+      "url": "https://www.cult-ui.com",
+      "kind": "gallery",
+      "why": "Opinionated, tactile components — dynamic islands, texture cards, expandable/morphing surfaces.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "motion",
+        "card",
+        "island",
+        "texture"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @cult-ui/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://cult-ui.com/r/registry.json"
+        }
+      ],
+      "caveat": "Rate-limits curl (429). Retry with delay.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "uiverse",
+      "name": "Uiverse (Galaxy)",
+      "url": "https://uiverse.io",
+      "kind": "gallery",
+      "why": "The largest open-source pure-CSS element library — thousands of community buttons, cards, checkboxes, loaders, toggles, tooltips, patterns. Zero dependencies, works in any stack.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "css",
+        "button",
+        "card",
+        "loader",
+        "checkbox",
+        "toggle",
+        "tooltip",
+        "pattern",
+        "zero-deps"
+      ],
+      "stack": [
+        "vanilla",
+        "react",
+        "vue",
+        "svelte"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/uiverse-io/galaxy",
+          "note": "ONLY reliable path. Folders: Buttons, Cards, Checkboxes, Forms, Inputs, Notifications, Patterns, Radio-buttons, Toggle-switches, Tooltips, loaders."
+        },
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/repos/uiverse-io/galaxy/contents/Buttons'",
+          "note": "Enumerate without cloning."
+        },
+        {
+          "method": "browse-headed",
+          "cmd": "browse --headed goto https://uiverse.io/",
+          "note": "The website is Cloudflare-blocked to headless AND curl (403). Do not waste turns on $B goto."
+        }
+      ],
+      "caveat": "GitHub mirror last pushed 2024-09; the live site has newer elements the repo lacks.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "codrops",
+      "name": "Codrops / Tympanus",
+      "url": "https://tympanus.net/codrops/",
+      "kind": "repo",
+      "why": "Since 2009, the source of the genuinely novel stuff — WebGL scroll effects, kinetic typography, page transitions, 3D grids, image distortion. 345 demo repos, one per article, MIT.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "webgl",
+        "scroll",
+        "transition",
+        "typography",
+        "gsap",
+        "three",
+        "experimental",
+        "hover",
+        "grid"
+      ],
+      "stack": [
+        "vanilla",
+        "three",
+        "gsap"
+      ],
+      "license": "MIT (per demo)",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/orgs/codrops/repos?sort=pushed&per_page=100'",
+          "note": "BEST PATH. 345 repos, one per demo, name+description tells you what it does."
+        },
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/search/repositories?q=org:codrops+scroll'",
+          "note": "Keyword search across the org."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/codrops/<DemoName>"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://tympanus.net/codrops/demos/",
+          "note": "For browsing visually; the article explains the technique."
+        }
+      ],
+      "caveat": "Vanilla JS demos, not React components. Expect to port.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "unicorn-studio",
+      "name": "Unicorn Studio",
+      "url": "https://www.unicorn.studio",
+      "kind": "tool",
+      "why": "Visual editor for shader/3D/motion scenes that exports an embeddable, parameterised web component. Design the effect in a GUI instead of writing GLSL.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "shader",
+        "webgl",
+        "3d",
+        "no-code",
+        "background",
+        "interactive",
+        "embed"
+      ],
+      "stack": [
+        "vanilla",
+        "react",
+        "next"
+      ],
+      "license": "proprietary (free tier)",
+      "cost": "freemium",
+      "ai_prompt": true,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.unicorn.studio/llm-example-projects.json",
+          "note": "KEY. Machine-readable catalog of curated projects: embed IDs, exposed variables, defaults, tags, and drop-in snippets."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://www.unicorn.studio/llms.txt"
+        },
+        {
+          "method": "manual",
+          "cmd": "",
+          "note": "Authoring a NEW scene requires the GUI — that is the user's job, not the agent's."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "pmndrs",
+      "name": "Poimandres — R3F + drei",
+      "url": "https://drei.docs.pmnd.rs",
+      "kind": "repo",
+      "why": "The React 3D standard. react-three-fiber (32k) renders Three.js declaratively; drei (9.8k) ships the ready-made helpers — Environment, MeshTransmissionMaterial, Float, Text3D, ScrollControls, Sparkles, Cloud.",
+      "dimension": [
+        "3d"
+      ],
+      "tags": [
+        "3d",
+        "webgl",
+        "three",
+        "r3f",
+        "drei",
+        "scroll",
+        "material",
+        "postprocessing"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://drei.docs.pmnd.rs/llms-full.txt",
+          "note": "Full drei helper reference in one file."
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i three @react-three/fiber @react-three/drei"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/pmndrs/drei"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "threejs",
+      "name": "Three.js official examples",
+      "url": "https://threejs.org/examples/",
+      "kind": "repo",
+      "why": "115k stars. ~500 canonical examples covering every feature — the ground truth when a technique must be correct, not just pretty.",
+      "dimension": [
+        "3d"
+      ],
+      "tags": [
+        "3d",
+        "webgl",
+        "webgpu",
+        "three",
+        "postprocessing",
+        "shader",
+        "reference"
+      ],
+      "stack": [
+        "vanilla",
+        "react"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://threejs.org/llms.txt"
+        },
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/repos/mrdoob/three.js/contents/examples'",
+          "note": "Each example is one self-contained HTML file."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/mrdoob/three.js"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "vanta",
+      "name": "Vanta.js",
+      "url": "https://www.vantajs.com",
+      "kind": "tool",
+      "why": "Animated 3D backgrounds in one <script> tag with a live parameter picker. The fastest possible path to a moving hero background.",
+      "dimension": [
+        "3d"
+      ],
+      "tags": [
+        "background",
+        "3d",
+        "webgl",
+        "hero",
+        "zero-build",
+        "birds",
+        "fog",
+        "waves",
+        "net"
+      ],
+      "stack": [
+        "vanilla",
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "cdn",
+          "cmd": "<script src=\"https://cdn.jsdelivr.net/npm/vanta/dist/vanta.net.min.js\"></script>",
+          "note": "Needs three.js or p5.js loaded first."
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i vanta three"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://www.vantajs.com",
+          "note": "Tweak params in the live picker, then copy the emitted config object."
+        }
+      ],
+      "caveat": "Repo last pushed 2024-03; stable but unmaintained. Pin the version.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "animista",
+      "name": "Animista",
+      "url": "https://animista.net",
+      "kind": "tool",
+      "why": "Pure-CSS keyframe animations with a live configurator (direction, timing, easing, delay) that emits minimal CSS. Zero JS, zero deps — the right answer whenever a library would be overkill.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "css",
+        "keyframes",
+        "animation",
+        "text",
+        "entrance",
+        "zero-deps",
+        "configurator"
+      ],
+      "stack": [
+        "vanilla",
+        "react",
+        "vue",
+        "svelte",
+        "tailwind"
+      ],
+      "license": "free to use",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://animista.net/llms-full.txt"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://animista.net/play/<category>/<name>",
+          "note": "Configure then copy CSS."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "originui",
+      "name": "Origin UI",
+      "url": "https://originui.com",
+      "kind": "gallery",
+      "why": "Huge set of polished, restrained input/form/nav components. The counterweight when the flashy libraries are wrong for the job.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "form",
+        "input",
+        "navigation",
+        "table",
+        "clean",
+        "accessible"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @originui/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://originui.com/r/registry.json"
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://originui.com/llms-full.txt"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "kokonutui",
+      "name": "Kokonut UI",
+      "url": "https://kokonutui.com",
+      "kind": "gallery",
+      "why": "Distinctive animated cards, buttons, AI-chat surfaces. Good middle ground between Magic UI and Origin UI.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "card",
+        "button",
+        "ai-chat",
+        "motion"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @kokonutui/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://kokonutui.com/r/registry.json",
+          "note": "51 items."
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://kokonutui.com/llms-full.txt"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "smoothui",
+      "name": "SmoothUI",
+      "url": "https://smoothui.dev",
+      "kind": "gallery",
+      "why": "Micro-interaction focused — the small delightful states most libraries skip.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "micro-interaction",
+        "motion",
+        "button",
+        "input",
+        "state"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @smoothui/<item>"
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://smoothui.dev/llms-full.txt"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "animata",
+      "name": "Animata",
+      "url": "https://animata.design",
+      "kind": "gallery",
+      "why": "Hand-crafted interaction animations and playful widgets, heavier on personality than on system consistency.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "playful",
+        "widget",
+        "micro-interaction",
+        "text"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://animata.design/llms-full.txt"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://animata.design"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "eldoraui",
+      "name": "Eldora UI",
+      "url": "https://eldoraui.site",
+      "kind": "gallery",
+      "why": "Framer-Motion-based animated components and marketing sections.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "motion",
+        "marketing",
+        "text",
+        "background"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @eldoraui/<item>"
+        },
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://eldoraui.site/llms-full.txt"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "fancy-components",
+      "name": "Fancy Components",
+      "url": "https://www.fancycomponents.dev",
+      "kind": "gallery",
+      "why": "Deliberately weird and experimental React components — physics text, gravity, pixel trails, letter swaps. Closest in spirit to Codrops but already in React.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "experimental",
+        "physics",
+        "text",
+        "cursor",
+        "playful",
+        "motion"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://www.fancycomponents.dev/llms.txt"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://www.fancycomponents.dev/docs/components/<slug>"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "liquefy-ui",
+      "name": "Liquefy UI",
+      "url": "https://liquefy-ui.com",
+      "kind": "gallery",
+      "why": "Apple-style Liquid Glass done properly: WebGL edge refraction plus pointer-driven springs over accessible Base UI primitives.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "glass",
+        "liquid-glass",
+        "webgl",
+        "refraction",
+        "apple",
+        "spring"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "see site",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @liquefy-ui/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://liquefy-ui.com/r/registry.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "honestui",
+      "name": "Honest UI",
+      "url": "https://www.honestui.com",
+      "kind": "gallery",
+      "why": "Components, animated interactions, shaders AND charts in one registry — rare combination.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "shader",
+        "animation",
+        "chart",
+        "interaction"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "see site",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @honestui/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.honestui.com/r/registry.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "vue-bits",
+      "name": "Vue Bits",
+      "url": "https://vue-bits.dev",
+      "kind": "gallery",
+      "why": "React Bits ported to Vue 3. Use when the project is not React.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "animation",
+        "background",
+        "text",
+        "webgl",
+        "vue"
+      ],
+      "stack": [
+        "vue",
+        "nuxt"
+      ],
+      "license": "MIT + Commons Clause",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn-vue@latest add @vue-bits/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://vue-bits.dev/r/registry.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "svelte-bits",
+      "name": "Svelte Bits",
+      "url": "https://sveltebits.xyz",
+      "kind": "gallery",
+      "why": "React Bits ported to Svelte.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "animation",
+        "background",
+        "text",
+        "webgl",
+        "svelte"
+      ],
+      "stack": [
+        "svelte"
+      ],
+      "license": "MIT + Commons Clause",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://sveltebits.xyz/r/registry.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "remocn",
+      "name": "RemoCN",
+      "url": "https://www.remocn.dev",
+      "kind": "gallery",
+      "why": "Production-ready Remotion components — text animations, backgrounds, transitions, full scene compositions. Bridges UI work and video work.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "video",
+        "remotion",
+        "text",
+        "transition",
+        "background",
+        "motion"
+      ],
+      "stack": [
+        "react",
+        "remotion"
+      ],
+      "license": "see site",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @remocn/<item>"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.remocn.dev/r/registry.json"
+        }
+      ],
+      "note_for_agent": "For video deliverables the house framework is HyperFrames (/hyperframes), not Remotion. Only reach here if the user explicitly chose Remotion.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "lucide-animated",
+      "name": "Animated icon sets (lucide / heroicons / hugeicons)",
+      "url": "https://lucide-animated.com",
+      "kind": "gallery",
+      "why": "Drop-in animated replacements for the icon sets already in use. Satisfies the no-emoji rule with motion for free.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "icon",
+        "animation",
+        "lucide",
+        "heroicons",
+        "hugeicons",
+        "micro-interaction"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "vue"
+      ],
+      "license": "open source",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @lucide-animated/<icon>",
+          "note": "Siblings: @heroicons-animated (316 icons), @hugeicons-animated, @hugeicons-animated-vue."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "loading-ui",
+      "name": "Loading UI",
+      "url": "https://loading-ui.com",
+      "kind": "gallery",
+      "why": "Spinners, loaders and loading animations as a dedicated set. Also @dotmatrix for dot-matrix loaders.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "loader",
+        "spinner",
+        "skeleton",
+        "animation"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "open source",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @loading-ui/<item>"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "soundcn",
+      "name": "SoundCN",
+      "url": "https://soundcn.xyz",
+      "kind": "gallery",
+      "why": "Game, interface, retro and voice sound effects as installable registry items. The audio half of 'non-standard UI' that everyone forgets.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "sound",
+        "sfx",
+        "audio",
+        "feedback",
+        "retro"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "see site",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @soundcn/<item>"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "spline",
+      "name": "Spline",
+      "url": "https://app.spline.design",
+      "kind": "tool",
+      "why": "Browser 3D editor with a huge community library of remixable scenes, exportable to React via @splinetool/react-spline. Designer-friendly path to 3D without GLSL.",
+      "dimension": [
+        "3d"
+      ],
+      "tags": [
+        "3d",
+        "no-code",
+        "editor",
+        "scene",
+        "community",
+        "export"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "vanilla"
+      ],
+      "license": "proprietary (free tier); scenes vary",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "npm i @splinetool/react-spline @splinetool/runtime",
+          "note": "Then <Spline scene=\"https://prod.spline.design/<id>/scene.splinecode\" />."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://app.spline.design/llms.txt"
+        },
+        {
+          "method": "manual",
+          "cmd": "",
+          "note": "Browsing and remixing the community library needs a logged-in session — the user's job."
+        }
+      ],
+      "caveat": "Heavy runtime. Check bundle/perf budget before shipping to a landing page.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "rive",
+      "name": "Rive Marketplace",
+      "url": "https://rive.app/marketplace",
+      "kind": "tool",
+      "why": "State-machine vector animation with real runtime interactivity and two-way data binding. Choose over Lottie whenever the animation must react to input, not just play.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "state-machine",
+        "interactive",
+        "vector",
+        "icon",
+        "character"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "vanilla"
+      ],
+      "license": "varies per asset",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "npm i @rive-app/react-canvas"
+        },
+        {
+          "method": "browse",
+          "cmd": "$B goto https://rive.app/marketplace",
+          "note": "Browsing works; downloading .riv usually needs a session."
+        },
+        {
+          "method": "manual",
+          "cmd": "",
+          "note": "Authoring is GUI-only."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "lottiefiles",
+      "name": "LottieFiles",
+      "url": "https://lottiefiles.com/free-animations",
+      "kind": "tool",
+      "why": "Largest library of ready JSON/dotLottie animations. Right choice for play-only designer animations; wrong choice when you need interactivity (use Rive).",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "lottie",
+        "json",
+        "icon",
+        "illustration",
+        "after-effects"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "vanilla"
+      ],
+      "license": "varies per asset",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "npm i @lottiefiles/dotlottie-react"
+        },
+        {
+          "method": "browse-headed",
+          "cmd": "browse --headed goto https://lottiefiles.com/free-animations",
+          "note": "403 to curl AND to headless. Do not retry $B goto."
+        },
+        {
+          "method": "manual",
+          "cmd": "",
+          "note": "Ask the user for the .lottie/.json URL or file; then wire it up."
+        }
+      ],
+      "caveat": "Per-asset licensing. Always check before shipping a downloaded animation.",
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "awesome-shadcn-ui",
+      "name": "awesome-shadcn-ui",
+      "url": "https://github.com/birobirobiro/awesome-shadcn-ui",
+      "kind": "awesome-list",
+      "why": "20.5k-star curated index of everything in the shadcn ecosystem — libraries, blocks, tools, templates. Use to discover sources this registry does not list yet.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "meta",
+        "awesome",
+        "discovery"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL https://raw.githubusercontent.com/birobirobiro/awesome-shadcn-ui/main/README.md"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "awesome-creative-coding",
+      "name": "awesome-creative-coding",
+      "url": "https://github.com/terkelg/awesome-creative-coding",
+      "kind": "awesome-list",
+      "why": "15.3k stars. Generative art, shaders, interaction design, data viz. Where to look when the brief is 'something nobody has seen'.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "meta",
+        "awesome",
+        "generative",
+        "shader",
+        "creative-coding"
+      ],
+      "stack": [
+        "vanilla",
+        "three",
+        "p5"
+      ],
+      "license": "CC0",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL https://raw.githubusercontent.com/terkelg/awesome-creative-coding/master/readme.md"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "awesome-threejs",
+      "name": "awesome-threejs / awesome-webgl",
+      "url": "https://github.com/AxiomeCG/awesome-threejs",
+      "kind": "awesome-list",
+      "why": "Curated Three.js and WebGL resources, libraries and showcase sites. Companion: sjfricke/awesome-webgl (1.5k).",
+      "dimension": [
+        "3d"
+      ],
+      "tags": [
+        "meta",
+        "awesome",
+        "three",
+        "webgl",
+        "discovery"
+      ],
+      "stack": [
+        "vanilla",
+        "three",
+        "react"
+      ],
+      "license": "CC0",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL https://raw.githubusercontent.com/AxiomeCG/awesome-threejs/master/README.md"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "open-props",
+      "name": "Open Props",
+      "url": "https://open-props.style",
+      "kind": "tool",
+      "why": "Supercharged CSS custom properties — ready easings, springs, animations, gradients, shadows. Pure CSS way to get motion quality without a JS animation library.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "css",
+        "tokens",
+        "easing",
+        "spring",
+        "gradient",
+        "shadow",
+        "animation",
+        "zero-deps"
+      ],
+      "stack": [
+        "vanilla",
+        "react",
+        "vue",
+        "svelte",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "npm i open-props"
+        },
+        {
+          "method": "cdn",
+          "cmd": "<link rel=\"stylesheet\" href=\"https://unpkg.com/open-props\">"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/argyleink/open-props"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "v0",
+      "name": "v0 by Vercel",
+      "url": "https://v0.dev",
+      "kind": "tool",
+      "why": "Generate a component from a prompt when no existing source matches. Last resort, not first — prefer real code from a real registry.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "ai-generate",
+        "prompt",
+        "react",
+        "tailwind"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "generated code is yours",
+      "cost": "freemium",
+      "ai_prompt": true,
+      "config_ui": true,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://v0.dev/llms.txt"
+        },
+        {
+          "method": "manual",
+          "cmd": "",
+          "note": "Generation is interactive and needs the user's account."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "hover-dev",
+      "name": "Hover.dev",
+      "url": "https://www.hover.dev",
+      "kind": "gallery",
+      "why": "Premium animated Tailwind sections and hover interactions for marketing pages, not discoverable through the shadcn directory.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "animation",
+        "tailwind",
+        "hover",
+        "marketing",
+        "section"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "browse",
+          "cmd": "$B goto https://www.hover.dev",
+          "note": "No machine-readable index found. Render and read the DOM."
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "evilcharts",
+      "name": "EvilCharts",
+      "url": "https://evilcharts.com",
+      "kind": "gallery",
+      "why": "Animated chart components on Recharts, styled to match shadcn. Fills the gap where Magic UI and Aceternity have no charts at all.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "chart",
+        "dataviz",
+        "recharts",
+        "animation"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://evilcharts.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://evilcharts.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @evilcharts/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.684"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://evilcharts.com/r/registry.json",
+          "note": "Item index. Full source per item: https://evilcharts.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/legions-developer/evilcharts",
+          "note": "⭐2913, license MIT, last push 2026-08-29"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "dashboardcn",
+      "name": "DashboardCN",
+      "url": "https://dashboardcn.com",
+      "kind": "gallery",
+      "why": "Dashboard and analytics building blocks: KPI cards, funnels, ranked lists, heatmaps and data tables as one coherent set.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "dashboard",
+        "chart",
+        "kpi",
+        "analytics",
+        "heatmap",
+        "funnel"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "NOASSERTION",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://dashboardcn.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://dashboardcn.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @dashboardcn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=96.447"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://dashboardcn.com/r/registry.json",
+          "note": "Item index. Full source per item: https://dashboardcn.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/NoahGdev/dashboardcn",
+          "note": "⭐2, license NOASSERTION, last push 2026-09-16"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "lytenyte",
+      "name": "LyteNyte Grid",
+      "url": "https://www.1771technologies.com",
+      "kind": "gallery",
+      "why": "Headless high-performance React data grid for tens of thousands of rows, where a styled shadcn table stops being enough.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "data-grid",
+        "table",
+        "headless",
+        "performance"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "NOASSERTION",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://www.1771technologies.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://www.1771technologies.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @lytenyte/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.865"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.1771technologies.com/r/registry.json",
+          "note": "Item index. Full source per item: https://www.1771technologies.com/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "niko-table",
+      "name": "Niko Table",
+      "url": "https://niko-table.com",
+      "kind": "gallery",
+      "why": "Open-code data tables and an editable grid on TanStack Table, with faceted and advanced filtering already wired up.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "table",
+        "data-grid",
+        "tanstack",
+        "editable",
+        "filter"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "NOASSERTION",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://niko-table.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @niko-table/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=96.447"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://niko-table.com/r/registry.json",
+          "note": "Item index. Full source per item: https://niko-table.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/Semkoo/niko-table-registry",
+          "note": "⭐66, license NOASSERTION, last push 2026-09-08"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "ilinxa",
+      "name": "Ilinxa",
+      "url": "https://ui.ilinxa.com",
+      "kind": "gallery",
+      "why": "The only registry shipping kanban, gantt, calendar, flow canvas, media editors and story viewers together as composed shadcn components.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "kanban",
+        "gantt",
+        "calendar",
+        "flow-canvas",
+        "editor",
+        "app-ui",
+        "story-viewer"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://ui.ilinxa.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @ilinxa/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.633"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ui.ilinxa.com/r/registry.json",
+          "note": "Item index. Full source per item: https://ui.ilinxa.com/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "assistant-ui",
+      "name": "assistant-ui",
+      "url": "https://www.assistant-ui.com",
+      "kind": "gallery",
+      "why": "Radix-style unstyled primitives for AI chat with adapters for AI SDK, LangGraph, Mastra and custom backends. Build the chat, do not copy a mock.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "ai-chat",
+        "chat",
+        "primitive",
+        "streaming",
+        "radix"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://www.assistant-ui.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://www.assistant-ui.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @assistant-ui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.592"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://r.assistant-ui.com/registry.json",
+          "note": "Item index. Full source per item: https://r.assistant-ui.com/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "ai-elements",
+      "name": "AI Elements (Vercel)",
+      "url": "https://ai-sdk.dev/elements",
+      "kind": "gallery",
+      "why": "Official Vercel AI SDK components: conversations, messages, reasoning blocks and tool calls, matched to the SDK streaming contract.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "ai-chat",
+        "chat",
+        "streaming",
+        "message",
+        "conversation"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://ai-sdk.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://ai-sdk.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @ai-elements/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.568"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ai-sdk.dev/elements/api/registry/registry.json",
+          "note": "Item index. Full source per item: https://ai-sdk.dev/elements/api/registry/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "delta",
+      "name": "Delta Components",
+      "url": "https://deltacomponents.dev",
+      "kind": "gallery",
+      "why": "AI and media-rich surfaces: streaming LLM chat, zoomable images and swipeable cards, the pieces an assistant UI needs beyond the message list.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "ai-chat",
+        "streaming",
+        "image",
+        "swipe",
+        "media"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @delta/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.256"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://deltacomponents.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://deltacomponents.dev/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "plate",
+      "name": "Plate",
+      "url": "https://platejs.org",
+      "kind": "gallery",
+      "why": "AI-powered rich text editor for React, plugin-based, installable as source through the shadcn CLI rather than as a black-box package.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "editor",
+        "rich-text",
+        "ai",
+        "wysiwyg",
+        "markdown"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "NOASSERTION",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://platejs.org/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://platejs.org/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @plate/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.695"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://platejs.org/r/registry.json",
+          "note": "Item index. Full source per item: https://platejs.org/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/udecode/plate",
+          "note": "⭐16594, license NOASSERTION, last push 2026-09-16"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "prosekit",
+      "name": "ProseKit",
+      "url": "https://prosekit.dev",
+      "kind": "gallery",
+      "why": "Rich text editor that works across React, Vue, Preact, Svelte and SolidJS from one core, for projects that are not React-only.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "editor",
+        "rich-text",
+        "multi-framework",
+        "prosemirror"
+      ],
+      "stack": [
+        "react",
+        "vue",
+        "svelte",
+        "vanilla"
+      ],
+      "license": "NOASSERTION",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @prosekit/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.742"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://prosekit.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://prosekit.dev/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/lucide-icons/lucide",
+          "note": "⭐24552, license NOASSERTION, last push 2026-09-16"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "mischief",
+      "name": "Mischief",
+      "url": "https://ui.tinkererslabs.com",
+      "kind": "gallery",
+      "why": "Document viewers nobody else ships: PDF, DOCX and JSON with redaction and bounding boxes, built for agent and review interfaces.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "viewer",
+        "pdf",
+        "docx",
+        "json",
+        "redaction",
+        "bounding-box",
+        "agent"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://ui.tinkererslabs.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://ui.tinkererslabs.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @mischief/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.432"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ui.tinkererslabs.com/r/registry.json",
+          "note": "Item index. Full source per item: https://ui.tinkererslabs.com/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "shadcnmaps",
+      "name": "shadcn Maps",
+      "url": "https://shadcnmaps.com",
+      "kind": "gallery",
+      "why": "Map components as pure SVG with no map runtime at all. The right pick when a choropleth or locator does not justify shipping Mapbox.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "map",
+        "geo",
+        "svg",
+        "zero-deps"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "none",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://shadcnmaps.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://shadcnmaps.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @shadcnmaps/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.712"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://shadcnmaps.com/r/registry.json",
+          "note": "Item index. Full source per item: https://shadcnmaps.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/LGLabGreg/shadcnmaps",
+          "note": "⭐10, license none, last push 2026-09-12"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "mapcn",
+      "name": "mapcn",
+      "url": "https://mapcn.dev",
+      "kind": "gallery",
+      "why": "Ready customizable interactive map components on MapLibre, styled for shadcn projects, when you do need a real tiled map.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "map",
+        "geo",
+        "maplibre",
+        "interactive"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://mapcn.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @mapcn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.865"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://mapcn.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://mapcn.dev/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/AnmolSaini16/mapcn",
+          "note": "⭐12076, license MIT, last push 2026-09-06"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "terrae",
+      "name": "Terrae",
+      "url": "https://www.terrae.dev",
+      "kind": "gallery",
+      "why": "Composable animated map components for Mapbox GL and MapLibre, the motion layer the other two map registries leave out.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "map",
+        "geo",
+        "mapbox",
+        "maplibre",
+        "animation"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @terrae/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.263"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.terrae.dev/registry.json",
+          "note": "Item index. Full source per item: https://www.terrae.dev/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/alamenai/terrae",
+          "note": "⭐244, license MIT, last push 2026-04-06"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "flagcn",
+      "name": "flagcn",
+      "url": "https://flagcn.dev",
+      "kind": "gallery",
+      "why": "306 country flags as source-owned components in SVG, PNG, WebP and JPEG with 4:3 variants. Directly useful for the three-language i18n rule.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "flag",
+        "icon",
+        "svg",
+        "i18n",
+        "locale"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "vue"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://flagcn.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://flagcn.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @flagcn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.695"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://flagcn.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://flagcn.dev/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/shadi-almilhem/flagcn",
+          "note": "⭐20, license MIT, last push 2026-08-19"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "better-upload",
+      "name": "Better Upload",
+      "url": "https://better-upload.com",
+      "kind": "gallery",
+      "why": "File uploads straight to any S3-compatible service with minimal setup, including the server half most upload components skip.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "upload",
+        "file",
+        "s3",
+        "dropzone",
+        "progress"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @better-upload/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.865"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://better-upload.com/r/registry.json",
+          "note": "Item index. Full source per item: https://better-upload.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/Nic13Gamer/better-upload",
+          "note": "⭐1288, license MIT, last push 2026-08-23"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "mediadrop",
+      "name": "MediaDrop",
+      "url": "https://www.mediadrop.dev",
+      "kind": "gallery",
+      "why": "Drag-and-drop upload blocks: dropzone, avatar uploader and multi-file, as finished UI rather than a bare input.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "upload",
+        "dropzone",
+        "avatar",
+        "multi-file"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @mediadrop/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.865"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.mediadrop.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://www.mediadrop.dev/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/autorender/react-mediadrop",
+          "note": "⭐26, license MIT, last push 2026-09-13"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "better-auth-ui",
+      "name": "Better Auth UI",
+      "url": "https://better-auth-ui.com",
+      "kind": "gallery",
+      "why": "Drop-in authentication screens wired to Better Auth, so sign-in is a real flow instead of a styled form with no backend.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "auth",
+        "login",
+        "signup",
+        "otp",
+        "account"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://better-auth-ui.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://better-auth-ui.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @better-auth-ui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.263"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://better-auth-ui.com/r/{style}/registry.json",
+          "note": "Item index. Full source per item: https://better-auth-ui.com/r/{style}/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "elements",
+      "name": "Elements",
+      "url": "https://www.tryelements.dev",
+      "kind": "gallery",
+      "why": "Full-stack registry items that bring their own backend: auth, monetization, uploads and AI installed in one command, not just the UI shell.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "auth",
+        "payment",
+        "upload",
+        "ai",
+        "full-stack"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @elements/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.704"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.tryelements.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://www.tryelements.dev/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/crafter-station/elements",
+          "note": "⭐523, license MIT, last push 2026-08-14"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "commercn",
+      "name": "CommerCN",
+      "url": "https://commercn.com",
+      "kind": "gallery",
+      "why": "Ecommerce blocks specifically: product grids, cart, checkout and pricing, the category the animation-first registries ignore.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "ecommerce",
+        "cart",
+        "checkout",
+        "product",
+        "pricing"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "none",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://commercn.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @commercn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.865"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://commercn.com/r/registry.json",
+          "note": "Item index. Full source per item: https://commercn.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/Logging-Studio/Commercn",
+          "note": "⭐77, license none, last push 2026-08-07"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "glasscn",
+      "name": "GlassCN",
+      "url": "https://glasscn-components.vercel.app",
+      "kind": "gallery",
+      "why": "Apple-inspired glassmorphism as a full component set rather than one blur utility, complementing Liquefy UI's WebGL refraction.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "glass",
+        "glassmorphism",
+        "apple",
+        "blur"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @glasscn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.425"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://glasscn-components.vercel.app/r/registry.json",
+          "note": "Item index. Full source per item: https://glasscn-components.vercel.app/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/kostyniuk/glasscn-components",
+          "note": "⭐79, license MIT, last push 2026-09-14"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "morphiq",
+      "name": "Morphiq",
+      "url": "https://morphiq.prathampatel.design",
+      "kind": "gallery",
+      "why": "GPU-accelerated prism lens and refractive glass with real depth. Sits between flat CSS glassmorphism and a full WebGL scene.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "glass",
+        "prism",
+        "refraction",
+        "gpu",
+        "cursor",
+        "depth"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @morphiq/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=95.852"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://morphiq.prathampatel.design/r/registry.json",
+          "note": "Item index. Full source per item: https://morphiq.prathampatel.design/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "8bitcn",
+      "name": "8bitcn",
+      "url": "https://www.8bitcn.com",
+      "kind": "gallery",
+      "why": "A complete 8-bit styled component set, not a pixel font on top of normal components. Use when the whole surface should read as retro.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "retro",
+        "pixel",
+        "8-bit",
+        "game",
+        "brutalist"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @8bitcn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.568"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.8bitcn.com/r/registry.json",
+          "note": "Item index. Full source per item: https://www.8bitcn.com/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "boldkit",
+      "name": "BoldKit",
+      "url": "https://boldkit.dev",
+      "kind": "gallery",
+      "why": "Neubrutalism done as a system: 43 components plus 42 SVG shapes with thick borders and hard shadows that stay consistent together.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "neubrutalism",
+        "brutalist",
+        "shape",
+        "shadow",
+        "border"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://boldkit.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://boldkit.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @boldkit/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.513"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://boldkit.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://boldkit.dev/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "brut-ui",
+      "name": "Brut UI",
+      "url": "https://www.brut-ui.site",
+      "kind": "gallery",
+      "why": "Neo-brutalist shadcn components with three configurable flavours, strengths and radius modes, so the style can be dialled down rather than all-or-nothing.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "neubrutalism",
+        "brutalist",
+        "variant",
+        "theme"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @brut-ui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.263"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.brut-ui.site/r/registry.json",
+          "note": "Item index. Full source per item: https://www.brut-ui.site/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "gooseui",
+      "name": "Goose UI",
+      "url": "https://gooseui.pro",
+      "kind": "gallery",
+      "why": "Custom toast notifications plus animated components, covering the feedback layer that most effect registries have nothing for.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "toast",
+        "notification",
+        "animation",
+        "radix"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @gooseui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.865"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://gooseui.pro/r/registry.json",
+          "note": "Item index. Full source per item: https://gooseui.pro/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "cognicatch",
+      "name": "CogniCatch",
+      "url": "https://cognicatch.dev",
+      "kind": "gallery",
+      "why": "Adaptive Error Boundaries with graceful fallback banners, modals and toasts. Turns a crashed subtree into a designed state instead of a white screen.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "error-boundary",
+        "fallback",
+        "toast",
+        "banner",
+        "modal",
+        "resilience"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://cognicatch.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://cognicatch.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @cognicatch/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=95.365"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://cognicatch.dev/registry/registry.json",
+          "note": "Item index. Full source per item: https://cognicatch.dev/registry/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "paletteui",
+      "name": "PaletteUI",
+      "url": "https://paletteui.xyz",
+      "kind": "tool",
+      "why": "Curated OKLCH themes plus a visual editor that exports CSS, Tailwind v4 and Figma. Fixes palettes before any effect gets layered on top.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "color",
+        "theme",
+        "oklch",
+        "tokens",
+        "figma",
+        "dark-mode"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @paletteui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.396"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://paletteui.xyz/r/registry.json",
+          "note": "Item index. Full source per item: https://paletteui.xyz/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "seamui",
+      "name": "Seam UI",
+      "url": "https://seamui.dev",
+      "kind": "gallery",
+      "why": "Base UI components with a motion.dev feel layer: springs, touch feedback and depth applied consistently, rather than animation bolted onto each component.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "motion",
+        "spring",
+        "touch",
+        "depth",
+        "base-ui",
+        "feel"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @seamui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.695"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://seamui.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://seamui.dev/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "interior",
+      "name": "Interior",
+      "url": "https://www.interior.dev",
+      "kind": "gallery",
+      "why": "Each item is a headless hook plus a styled example in one self-contained file, with motion as the only dependency. Take the behaviour, drop the styling.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "micro-interaction",
+        "hook",
+        "headless",
+        "motion"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://www.interior.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://www.interior.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @interior/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.263"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://www.interior.dev/r/registry.json",
+          "note": "Item index. Full source per item: https://www.interior.dev/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/ddoemonn/interior",
+          "note": "⭐780, license MIT, last push 2026-09-10"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "crafterui",
+      "name": "Crafter UI",
+      "url": "https://crafterui.com",
+      "kind": "gallery",
+      "why": "Motion and interaction pieces with a 3D lean: 3D carousels, scroll letter reveals and a Dynamic Island, adjacent to but distinct from Aceternity.",
+      "dimension": [
+        "2d",
+        "3d"
+      ],
+      "tags": [
+        "motion",
+        "3d-carousel",
+        "scroll",
+        "text",
+        "dynamic-island"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://crafterui.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @crafterui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=95.852"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://crafterui.com/r/registry.json",
+          "note": "Item index. Full source per item: https://crafterui.com/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "joyco",
+      "name": "JOYCO Studio",
+      "url": "https://registry.joyco.studio",
+      "kind": "gallery",
+      "why": "Studio-grade utility components: HLS video player, ScrollArea with gradient masks, chat UI, mobile menu and marquee, extracted from production work.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "video",
+        "hls",
+        "scroll-area",
+        "chat",
+        "marquee",
+        "mobile-menu"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://registry.joyco.studio/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @joyco/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.263"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://registry.joyco.studio/r/registry.json",
+          "note": "Item index. Full source per item: https://registry.joyco.studio/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "framecn",
+      "name": "FrameCN",
+      "url": "https://framecn.vercel.app",
+      "kind": "gallery",
+      "why": "Customizable video components for React as installable source, so the player matches the design system instead of looking like a browser default.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "video",
+        "player",
+        "media",
+        "customizable"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://framecn.vercel.app/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://framecn.vercel.app/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @framecn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.513"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://framecn.vercel.app/r/registry.json",
+          "note": "Item index. Full source per item: https://framecn.vercel.app/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-17"
+    },
+    {
+      "id": "emailcn",
+      "name": "EmailCN",
+      "url": "https://emailcn.vercel.app",
+      "kind": "gallery",
+      "why": "Customizable React email components. Transactional and marketing email is a rendering target nothing else in the arsenal covers.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "email",
+        "template",
+        "transactional",
+        "react-email",
+        "newsletter"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://emailcn.vercel.app/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://emailcn.vercel.app/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @emailcn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=93.816"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://emailcn.vercel.app/r/registry.json",
+          "note": "Item index. Full source per item: https://emailcn.vercel.app/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/shadcn-labs/emailcn",
+          "note": "⭐289, license MIT, last push 2026-09-16"
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i emailcn",
+          "note": "Published package, latest 0.0.0. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "tour",
+      "name": "Onboarding Tour",
+      "url": "https://onboarding-tour.vercel.app",
+      "kind": "gallery",
+      "why": "Product tour and coachmark components that integrate with shadcn/ui, for first-run guidance rather than static empty states.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "tour",
+        "onboarding",
+        "walkthrough",
+        "coachmark",
+        "product-tour"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @tour/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.981"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://onboarding-tour.vercel.app/r/registry.json",
+          "note": "Item index. Full source per item: https://onboarding-tour.vercel.app/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/tonghohin/tour",
+          "note": "⭐71, license MIT, last push 2026-08-08"
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i shadcn-map",
+          "note": "Published package, latest 0.2.4. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "waves-cn",
+      "name": "Waves CN",
+      "url": "https://waves-cn.vercel.app",
+      "kind": "gallery",
+      "why": "Wave players and waveform visualisers on wavesurfer.js. Pairs with soundcn: that one plays effects, this one shows and scrubs audio.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "audio",
+        "waveform",
+        "player",
+        "wavesurfer",
+        "podcast",
+        "music"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://waves-cn.vercel.app/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://waves-cn.vercel.app/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @waves-cn/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.981"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://waves-cn.vercel.app/r/registry.json",
+          "note": "Item index. Full source per item: https://waves-cn.vercel.app/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/Ziane-Badreddine/waves-cn",
+          "note": "⭐20, license MIT, last push 2026-09-16"
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "intentui",
+      "name": "Intent UI",
+      "url": "https://intentui.com",
+      "kind": "gallery",
+      "why": "Accessible React components on React Aria that you copy and own. Reach for it when keyboard and screen-reader correctness outranks visual flair.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "accessible",
+        "react-aria",
+        "a11y",
+        "keyboard",
+        "primitive"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://intentui.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @intentui/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=98.79"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://intentui.com/r/registry.json",
+          "note": "Item index. Full source per item: https://intentui.com/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "billingsdk",
+      "name": "BillingSDK",
+      "url": "https://billingsdk.com",
+      "kind": "gallery",
+      "why": "SaaS billing surfaces: subscription management, usage meters, plan changes and invoices, which commercn's storefront blocks do not cover.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "billing",
+        "subscription",
+        "saas",
+        "pricing",
+        "usage",
+        "invoice"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "GPL-3.0",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://billingsdk.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @billingsdk/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=95.018"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://billingsdk.com/r/registry.json",
+          "note": "Item index. Full source per item: https://billingsdk.com/r/<item>.json"
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/dodopayments/billingsdk",
+          "note": "⭐506, license GPL-3.0, last push 2026-09-15"
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "inferencesh",
+      "name": "inference.sh UI",
+      "url": "https://ui.inference.sh",
+      "kind": "gallery",
+      "why": "Batteries-included agent components with streaming chat and tool-call rendering, a level above assistant-ui's unstyled primitives.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "ai-chat",
+        "agent",
+        "streaming",
+        "tool-call",
+        "code-highlight"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "tailwind"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "shadcn-registry",
+          "cmd": "npx shadcn@latest add @inferencesh/<item>",
+          "note": "Listed in the official shadcn directory; resolves with no config. health=97.981"
+        },
+        {
+          "method": "registry-json",
+          "cmd": "curl -sSL https://ui.inference.sh/r/registry.json",
+          "note": "Item index. Full source per item: https://ui.inference.sh/r/<item>.json"
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "reactflow",
+      "name": "React Flow (xyflow)",
+      "url": "https://reactflow.dev",
+      "kind": "repo",
+      "why": "Node-based editors, flowcharts and DAGs as real React components with pan, zoom, edges and handles already solved. Svelte Flow ships from the same repo.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "diagram",
+        "flowchart",
+        "node-editor",
+        "graph",
+        "canvas",
+        "dag"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "svelte"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://reactflow.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://reactflow.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/xyflow/xyflow",
+          "note": "⭐38425, license MIT, last push 2026-09-17"
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i @xyflow/react",
+          "note": "Published package, latest 12.11.6. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "tldraw",
+      "name": "tldraw",
+      "url": "https://tldraw.dev",
+      "kind": "repo",
+      "why": "Infinite-canvas SDK for building whiteboard and spatial apps in React, with multiplayer and shape extensibility built in.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "canvas",
+        "whiteboard",
+        "infinite-canvas",
+        "draw",
+        "collaboration"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "NOASSERTION",
+      "cost": "freemium",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://tldraw.dev/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://tldraw.dev/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/tldraw/tldraw",
+          "note": "⭐50453, license NOASSERTION, last push 2026-09-18"
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i tldraw",
+          "note": "Published package, latest 5.4.2. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "excalidraw",
+      "name": "Excalidraw",
+      "url": "https://excalidraw.com",
+      "kind": "repo",
+      "why": "Embeddable hand-drawn diagramming canvas. Use when a diagram should look sketched rather than engineered, and when users author it themselves.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "diagram",
+        "whiteboard",
+        "sketch",
+        "hand-drawn",
+        "embed"
+      ],
+      "stack": [
+        "react",
+        "next"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-full",
+          "cmd": "curl -sSL https://excalidraw.com/llms-full.txt",
+          "note": "Full source dump of every component in one file."
+        },
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://excalidraw.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i @excalidraw/excalidraw",
+          "note": "Published package, latest 0.18.1. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "shiki",
+      "name": "Shiki",
+      "url": "https://shiki.style",
+      "kind": "repo",
+      "why": "TextMate-grammar syntax highlighting that matches VS Code output exactly, so code blocks in docs and chat UIs stop looking approximate.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "syntax-highlight",
+        "code-block",
+        "textmate",
+        "theme"
+      ],
+      "stack": [
+        "react",
+        "next",
+        "vue",
+        "vanilla"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "npm i shiki",
+          "note": "Published package, latest 4.4.3. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "webgpu-samples",
+      "name": "WebGPU Samples",
+      "url": "https://github.com/webgpu/webgpu-samples",
+      "kind": "repo",
+      "why": "The canonical WebGPU reference implementations, including compute pipelines WebGL cannot express. The ground truth as WebGPU replaces WebGL.",
+      "dimension": [
+        "3d"
+      ],
+      "tags": [
+        "webgpu",
+        "wgsl",
+        "compute",
+        "shader",
+        "gpu",
+        "reference"
+      ],
+      "stack": [
+        "vanilla",
+        "react"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/webgpu/webgpu-samples",
+          "note": "⭐2170, license BSD-3-Clause, last push 2026-09-16"
+        },
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/repos/webgpu/webgpu-samples/contents/'",
+          "note": "Enumerate files without cloning. `gh api` for 5000 req/h."
+        }
+      ],
+      "verified": "2026-09-19",
+      "note_for_agent": "Live demos render at https://webgpu.github.io/webgpu-samples/ — use $B goto there to see an effect; read the code from the repo."
+    },
+    {
+      "id": "react-native-reusables",
+      "name": "React Native Reusables",
+      "url": "https://reactnativereusables.com",
+      "kind": "gallery",
+      "why": "shadcn/ui brought to React Native with NativeWind, so the same copy-and-own workflow and CLI apply to mobile instead of stopping at the web.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "mobile",
+        "react-native",
+        "expo",
+        "nativewind",
+        "shadcn",
+        "cross-platform"
+      ],
+      "stack": [
+        "react-native",
+        "expo",
+        "nativewind"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/founded-labs/react-native-reusables",
+          "note": "⭐8659, license MIT, last push 2026-09-17"
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "reanimated",
+      "name": "React Native Reanimated",
+      "url": "https://docs.swmansion.com/react-native-reanimated",
+      "kind": "repo",
+      "why": "The animation engine every serious React Native app uses: worklets run on the UI thread, so gestures and transitions stay smooth off the JS thread.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "mobile",
+        "react-native",
+        "animation",
+        "gesture",
+        "worklet",
+        "60fps"
+      ],
+      "stack": [
+        "react-native",
+        "expo"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "llms-txt",
+          "cmd": "curl -sSL https://docs.swmansion.com/llms.txt",
+          "note": "Index + prose contract."
+        },
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/software-mansion/react-native-reanimated",
+          "note": "⭐11002, license MIT, last push 2026-09-18"
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i react-native-reanimated",
+          "note": "Published package, latest 4.7.0. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "moti",
+      "name": "Moti",
+      "url": "https://moti.fyi",
+      "kind": "repo",
+      "why": "A Framer-Motion-shaped API on top of Reanimated. Use when the team already thinks in motion props and does not want to write worklets.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "mobile",
+        "react-native",
+        "animation",
+        "declarative",
+        "framer-like"
+      ],
+      "stack": [
+        "react-native",
+        "expo",
+        "react"
+      ],
+      "license": "MIT",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/nandorojo/dripsy",
+          "note": "⭐2167, license MIT, last push 2024-10-09"
+        },
+        {
+          "method": "npm",
+          "cmd": "npm i moti",
+          "note": "Published package, latest 0.30.0. Installing beats copying source for a real library."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "pow-swiftui",
+      "name": "Pow (SwiftUI)",
+      "url": "https://github.com/EmergeTools/Pow",
+      "kind": "repo",
+      "why": "Drop-in SwiftUI transitions and change effects. The iOS-native answer when the deliverable is an app, not a web view.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "mobile",
+        "swiftui",
+        "ios",
+        "transition",
+        "effect",
+        "animation"
+      ],
+      "stack": [
+        "swiftui",
+        "ios"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/EmergeTools/Pow",
+          "note": "⭐4392, license MIT, last push 2026-04-13"
+        },
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/repos/EmergeTools/Pow/contents/'",
+          "note": "Enumerate files without cloning. `gh api` for 5000 req/h."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "compose-samples",
+      "name": "Jetpack Compose Samples",
+      "url": "https://github.com/android/compose-samples",
+      "kind": "repo",
+      "why": "Google's official Compose sample apps, the reference for Android motion and layout patterns the way three.js examples are for WebGL.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "mobile",
+        "android",
+        "compose",
+        "kotlin",
+        "animation",
+        "reference"
+      ],
+      "stack": [
+        "compose",
+        "android",
+        "kotlin"
+      ],
+      "license": "unknown",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "git-clone",
+          "cmd": "git clone --depth 1 https://github.com/android/compose-samples",
+          "note": "⭐23466, license Apache-2.0, last push 2026-09-18"
+        },
+        {
+          "method": "gh-api",
+          "cmd": "curl -sSL 'https://api.github.com/repos/android/compose-samples/contents/'",
+          "note": "Enumerate files without cloning. `gh api` for 5000 req/h."
+        }
+      ],
+      "verified": "2026-09-19"
+    },
+    {
+      "id": "flutter-animate",
+      "name": "flutter_animate",
+      "url": "https://pub.dev/packages/flutter_animate",
+      "kind": "repo",
+      "why": "Composable effect-chain animations for Flutter with a declarative API, the closest Flutter equivalent to the web motion libraries here.",
+      "dimension": [
+        "2d"
+      ],
+      "tags": [
+        "mobile",
+        "flutter",
+        "dart",
+        "animation",
+        "effect"
+      ],
+      "stack": [
+        "flutter",
+        "dart"
+      ],
+      "license": "BSD-3-Clause",
+      "cost": "free",
+      "ai_prompt": false,
+      "config_ui": false,
+      "access": [
+        {
+          "method": "npm",
+          "cmd": "flutter pub add flutter_animate",
+          "note": "Dart/Flutter package, latest 4.5.2."
+        }
+      ],
+      "verified": "2026-09-19",
+      "caveat": "Last published 2024-11 — stable but quiet. Pin the version and check pub.dev before adopting."
+    }
+  ]
+}
