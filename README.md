@@ -9,6 +9,9 @@ which source to reach for.
 
 **92 curated sources · 370+ live shadcn registries · 14 access methods · 291 tags**
 
+Self-updating: the skill checks this repo once a day and upgrades itself,
+merging the registry so sources you added locally are never lost.
+
 ---
 
 ## Install (prompt for an AI agent)
@@ -76,6 +79,7 @@ shadcn registries fetched at query time.
 
 ```bash
 S=~/.claude/skills/ui-arsenal/scripts
+python3 $S/update.py --auto --quiet                  # once per session, silent when current
 python3 $S/search.py "liquid glass"                  # find a source
 python3 $S/search.py --tag shader --dim 3d           # filter by tag / 2d / 3d
 python3 $S/search.py "kanban" --live                 # + the 370+ live registries
@@ -120,11 +124,19 @@ mandatory and specific; Python 3 standard library, no pip.
 
   ---8<--- end block ---8<---
 
-STEP 4 — Report
+STEP 4 — Confirm self-update works
 
-  Tell me: where the skill landed, the output of the three verification commands,
-  whether CLAUDE.md was created / appended / replaced, and the backup filename.
-  If anything failed, say so plainly rather than reporting success.
+  python3 ~/.claude/skills/ui-arsenal/scripts/update.py --status
+
+  It should print the local version and "auto-update on". From here the skill keeps
+  itself current: it checks this repo once a day and applies minor and patch releases
+  on its own, merging the registry so anything I add locally is never lost.
+
+STEP 5 — Report
+
+  Tell me: where the skill landed, the output of the verification commands,
+  whether CLAUDE.md was created / appended / replaced, the backup filename, and the
+  update status line. If anything failed, say so plainly rather than reporting success.
 `````
 
 <details>
@@ -187,6 +199,7 @@ SwiftUI, Jetpack Compose, Flutter). Плюс живой каталог 370+ shad
 
 ```bash
 S=~/.claude/skills/ui-arsenal/scripts
+python3 $S/update.py --auto --quiet                  # раз за сессию, молчит если актуально
 python3 $S/search.py "liquid glass"                  # найти источник
 python3 $S/search.py --tag shader --dim 3d           # фильтры: тег / 2d / 3d
 python3 $S/search.py "kanban" --live                 # + 370+ живых реестров
@@ -231,11 +244,19 @@ python3 $S/add_source.py --url ... --why ...         # пополнить арс
 
   ---8<--- конец блока ---8<---
 
-ШАГ 4 — Отчёт
+ШАГ 4 — Проверь самообновление
 
-  Скажи: куда лёг скилл, вывод трёх проверочных команд, был ли CLAUDE.md создан /
-  дополнен / заменён и как называется бэкап. Если что-то упало — скажи прямо,
-  а не рапортуй об успехе.
+  python3 ~/.claude/skills/ui-arsenal/scripts/update.py --status
+
+  Должна напечататься локальная версия и «auto-update on». Дальше скилл держит себя
+  в актуальном состоянии сам: раз в сутки сверяется с репозиторием и применяет
+  minor/patch-релизы, сливая реестр так, что мои локальные источники не теряются.
+
+ШАГ 5 — Отчёт
+
+  Скажи: куда лёг скилл, вывод проверочных команд, был ли CLAUDE.md создан /
+  дополнен / заменён, как называется бэкап и что показал статус обновления.
+  Если что-то упало — скажи прямо, а не рапортуй об успехе.
 `````
 
 </details>
@@ -290,6 +311,22 @@ implement: `<base>/registry.json` lists items, `<base>/<item>.json` returns the 
 with every file's source inlined. That is the highest-leverage command here —
 current source, no install, no browser.
 
+**Stay current.** `SKILL.md` runs this at the start of a session; you rarely call it
+by hand.
+
+```bash
+python3 $S/update.py --auto --quiet   # silent when current, exits 0 offline
+python3 $S/update.py --status         # local vs remote version, cache age
+python3 $S/update.py --apply          # force an update now
+python3 $S/update.py --off            # disable automatic updating
+```
+
+Minor and patch releases apply themselves. A major bump prints a notice and waits —
+a major version means the `sources.json` schema moved. Every update writes a full
+backup under `~/.cache/ui-arsenal/` first, and the registry is **merged**, not
+replaced: union by `id`, the newer `verified` date wins, and entries that exist only
+in your copy always survive.
+
 **Extend the arsenal.**
 
 ```bash
@@ -336,6 +373,8 @@ scripts/search.py              search curated + live
 scripts/fetch.py               llms.txt / registry index / item source / .md twin
 scripts/probe.py               what access methods does this URL support?
 scripts/add_source.py          add or re-verify sources
+scripts/update.py              self-update: version check + merge-safe upgrade
+VERSION                        semver, compared against this repo
 references/access-methods.md   per-method recipes, gotchas, bot walls, rate limits
 references/maintaining.md      step-by-step: how to extend and improve this skill
 wiki/                          decisions and architecture notes (Obsidian-friendly)

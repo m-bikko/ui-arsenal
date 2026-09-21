@@ -153,6 +153,32 @@ Adding an optional field is safe — `search.py` ignores unknown keys. Renaming 
 removing a field is not: grep all four scripts first. If you change the schema
 shape, bump `schema_version` and note the change in `wiki/log.md`.
 
+## 4b. Releasing — how installed copies pick up your change
+
+Installed copies self-update from `github.com/m-bikko/ui-arsenal` via
+`scripts/update.py`. Nothing ships until `VERSION` is bumped, because the check
+compares semver, not commits.
+
+1. Make the change and verify it.
+2. Bump `VERSION`:
+   - **patch** — new sources, fixed `access` entries, doc edits;
+   - **minor** — a new script, a new optional field, a routing overhaul;
+   - **major** — anything that breaks `data/sources.json`'s shape. `--auto` refuses
+     to apply a major bump on its own and tells the user to review first, so bump
+     major *only* when a human really should look.
+3. Commit and push to `main`.
+4. Sanity-check what installed copies will see:
+   ```bash
+   curl -sSL https://raw.githubusercontent.com/m-bikko/ui-arsenal/main/VERSION
+   python3 $S/update.py --check --force
+   ```
+
+`update.py` replaces `SKILL.md`, `README.md`, `LICENSE`, `VERSION`, `scripts/`,
+`references/` and `wiki/` wholesale, and **merges** `data/sources.json` — union by
+`id`, newer `verified` wins, local-only entries always kept. So a user's own sources
+survive every release. If you ever need to *remove* a source from everyone's copy,
+a merge cannot do it: that needs a major bump and a migration note.
+
 ## 5. Handing this to a different agent
 
 If the agent is not Claude Code, translate the tool names:

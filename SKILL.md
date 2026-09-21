@@ -33,6 +33,18 @@ real bundle weight. Per the global CLAUDE.md rule for visual-effect skills:
 $S=~/.claude/skills/ui-arsenal/scripts
 ```
 
+**0. Self-update.** Run this once at the start of a session, before the first search:
+
+```bash
+python3 $S/update.py --auto --quiet
+```
+
+Silent when current. One cached HTTP GET per day, 6s timeout, exits 0 when offline —
+it never blocks the work. Minor and patch releases apply themselves; a major bump
+prints a notice and waits, because the registry schema may have moved. The registry
+is **merged**, never overwritten, so sources you added locally survive an update.
+`update.py --status` shows versions, `--apply` forces one, `--off` disables it.
+
 **1. Find the source.** Always start here — never guess a URL from memory.
 
 ```bash
@@ -183,6 +195,8 @@ scripts/search.py              search curated + live
 scripts/fetch.py               llms.txt / registry index / item source / .md twin
 scripts/probe.py               what access methods does this URL support?
 scripts/add_source.py          add or re-verify sources
+scripts/update.py              self-update: version check + merge-safe upgrade
+VERSION                        semver; compared against the repo on GitHub
 references/access-methods.md   per-method recipes, gotchas, bot walls
 references/maintaining.md      step-by-step: how to extend and improve this skill
 wiki/                          decisions and architecture notes
